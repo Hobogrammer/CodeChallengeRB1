@@ -1,4 +1,5 @@
 class Library
+  attr_accessor :book, :shelf
 
   def initialize
     @books = []
@@ -6,17 +7,29 @@ class Library
   end
 
   def add_book(name)
-    @books << Book.new(name)
+    @book = Book.new(name)
+    @books << @book
+    return @book
   end
 
   def add_shelf(name)
-    @shelves << Shelf.new(name)
+    @shelf = Shelf.new(name)
+    @shelves << @shelf
+    return @shelf
   end
 
   def book_list
     @books.each do |book|
       puts book.name
     end
+  end
+
+  def self.update_shelf(lib, book,shelf)
+    puts lib.shelves
+    to_update = @shelves.select { |x| x.name == shelf }
+    update_index = @shelves.index(to_update)
+    to_update.shelved_books << book.name
+    @shelves[update_index] = to_update 
   end
 
   def shelf_report
@@ -30,7 +43,7 @@ class Library
   end
 
 
-  class Book
+  class Book < Library
     attr_accessor :name, :shelf
 
     def initialize(name)
@@ -48,10 +61,19 @@ class Library
   end
 
   class Shelf
-    attr_accessor :name
+    attr_accessor :name, :shelved_books
 
     def initialize(name)
       @name = name
+      @shelved_books = []
+    end
+
+    def update_add(book)
+      @shelved_books << book.name
+    end
+
+    def update_remove(book)
+      @shelved_books.delete_if { |x| x == book.name }
     end
   end
 
@@ -60,14 +82,23 @@ end
 
 my_lib = Library.new
 
-my_lib.add_shelf("Childrens")
-my_lib.add_shelf("Adult")
-my_lib.add_shelf("Young Adults")
+shelf1 = my_lib.add_shelf("Childrens")
+shelf2 = my_lib.add_shelf("Adult")
+shelf3 = my_lib.add_shelf("Young Adult")
 
-my_lib.add_book("Lord of the Flies")
-my_lib.add_book("The Da Vinci Code")
-my_lib.add_book("The Little Engine That Could")
+my_book = my_lib.add_book("Lord of the Flies")
+book2 = my_lib.add_book("The Da Vinci Code")
+book3 = my_lib.add_book("The Little Engine That Could")
 
 my_lib.shelf_report
 my_lib.book_list
 
+my_book.enshelf("Young Adult")
+book2.enshelf("Adult")
+book3.enshelf("Childrens")
+shelf3.update_add(my_book)
+puts "Book on #{shelf3.name}, #{shelf3.shelved_books.to_s}"
+my_book.unshelf
+shelf3.update_remove(my_book)
+puts "Book on #{shelf3.name}, #{shelf3.shelved_books.to_s}"
+#suboptimal, return if you have time
