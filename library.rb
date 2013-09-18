@@ -24,14 +24,6 @@ class Library
     end
   end
 
-  def self.update_shelf(lib, book,shelf)
-    puts lib.shelves
-    to_update = @shelves.select { |x| x.name == shelf }
-    update_index = @shelves.index(to_update)
-    to_update.shelved_books << book.name
-    @shelves[update_index] = to_update 
-  end
-
   def shelf_report
     if @shelves.length > 1
       puts "There are #{@shelves.length} shelves in the library"
